@@ -5,7 +5,9 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class Main {
@@ -13,10 +15,13 @@ public class Main {
     private static final String PATH_TO_NUMBERS = "src/main/resources/numbers.txt";
     private static final String PATH_TO_USERS = "src/main/resources/users.txt";
     private static final String PATH_TO_JSON_FILE = "src/main/resources/users.json";
+
+    private static final String PATH_TO_WORDS = "src/main/resources/words.txt";
     public static void main(String[] args) {
 
-    chekCorrectNumberFormat(PATH_TO_NUMBERS);
-    convertUsersListToJsonFile(createUsersList(readUsersFromFile(PATH_TO_USERS)));
+    //chekCorrectNumberFormat(PATH_TO_NUMBERS);
+    //convertUsersListToJsonFile(createUsersList(readUsersFromFile(PATH_TO_USERS)));
+        System.out.println(countWordFrequency(PATH_TO_WORDS));
 
     }
 
@@ -55,6 +60,34 @@ public class Main {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static String countWordFrequency(String filePath){
+        Map <String,Integer> wordFrequencyMap = new HashMap<>();
+
+        try(BufferedReader reader = new BufferedReader(new FileReader(filePath))){
+            String line;
+            while((line = reader.readLine()) != null){
+                String[] words = line.split("\\s+|\\n+");
+                for (String word : words) {
+                    if(!word.isEmpty()){
+                        int frequency = wordFrequencyMap.getOrDefault(word, 0);
+                        wordFrequencyMap.put(word, frequency + 1);
+                    }
+                }
+            }
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        StringBuilder result = new StringBuilder();
+        for (Map.Entry<String,Integer> entry : wordFrequencyMap.entrySet()) {
+            result.append(entry.getKey()).append(" ").append(entry.getValue()).append("\n");
+        }
+        return  result.toString();
+
     }
 
     public static List<User> createUsersList (String[] usersToRedag){
